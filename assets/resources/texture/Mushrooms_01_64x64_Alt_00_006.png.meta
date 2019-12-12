@@ -1,0 +1,32 @@
+{
+  "ver": "2.3.1",
+  "uuid": "7a927dcb-3031-4cc2-9859-cfe319f10b3b",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "platformSettings": {},
+  "subMetas": {
+    "Mushrooms_01_64x64_Alt_00_006": {
+      "ver": "1.0.4",
+      "uuid": "bc5242d0-2e90-48bf-b9ce-ae0cf5299315",
+      "rawTextureUuid": "7a927dcb-3031-4cc2-9859-cfe319f10b3b",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 64,
+      "height": 64,
+      "rawWidth": 64,
+      "rawHeight": 64,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
