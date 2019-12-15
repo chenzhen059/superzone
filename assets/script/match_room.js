@@ -19,6 +19,7 @@ cc.Class({
     onLoad () {
         window.fighting_scene = this.fighting;
         window.scene_1_scene = this.scene_1;
+        window.state = 1;
         this.node.getChildByName('block').getChildByName('room_id').getComponent(cc.Label).string = window.roomid;
         this.node.getChildByName('seat1').getChildByName('player_1_name').getComponent(cc.Label).string = window.host_name;
         this.node.getChildByName('seat1').getChildByName('ready_1').active = false;
@@ -26,7 +27,6 @@ cc.Class({
     },
     onClickBack:function(){
         this.PLAY_LEAVE();
-        window.state = 0;
         cc.director.loadScene(window.scene_1_scene);
     },
     onClickStartGame:function(){

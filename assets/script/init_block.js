@@ -27,6 +27,9 @@ cc.Class({
     time_change:function(){
         if (this.daojishi >= 1){
             this.daojishi--;
+            if (window.stop == true){
+                this.daojishi = 0;
+            }
             this.time.string = this.daojishi;
         }
         else {
@@ -84,7 +87,8 @@ cc.Class({
         this.block_prop_speed.push(speed);
     },
     onLoad () {
-        // cc.audioEngine.play(this.bgm, true, 1);
+        cc.audioEngine.play(this.bgm, true, 1);
+        window.state = 2;
         if (window.current_uid == window.host_uid){
             this.control = this.node.getChildByName('move').getChildByName('circle_host');
             this.extra = this.node.getChildByName('move').getChildByName('circle_clients');
@@ -131,7 +135,6 @@ cc.Class({
     },
     onClickBack:function(){
         this.PLAY_LEAVE();
-        window.state = 0;
         cc.director.loadScene(window.scene_1_scene);
     },
     PLAY_LEAVE:function(){

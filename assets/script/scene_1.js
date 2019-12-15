@@ -19,6 +19,10 @@ cc.Class({
             default: [],
             type: cc.SpriteFrame,
         },
+        bgm_start:{
+            type: cc.AudioClip,
+            default:null,
+        },
     },
 
 
@@ -34,6 +38,8 @@ cc.Class({
         window.consume_propType = null;
         window.propType = -1;
         window.zoneIdList = [];
+        window.stop = false;
+        cc.audioEngine.play(this.bgm_start, true, 1);
     	this.node.getChildByName('create_room').active = false;
     	this.node.getChildByName('join_room').active = false;
     	this.node.getChildByName('roomid_print').active = false;
@@ -68,20 +74,22 @@ cc.Class({
         this.starts = true;
     },
     Client:function(roomid){
+        cc.log("client");
         window.flag = false;
-	    window.socket = new WebSocket("wss://superzone.equator8848.xyz/superzone/ws/game/"+window.code);
 
-	    window.socket.addEventListener('open', function (event) {
-	        window.socket.send(JSON.stringify({"messageType":"JOIN_GAME","data":{"roomId":roomid}}));
-	    });
+
+	    window.socket.send(JSON.stringify({"messageType":"JOIN_GAME","data":{"roomId":roomid}}));
+
 
 	    window.socket.addEventListener('message', function (event) {
 	        // console.log('Message from server ', event);
 	        var eventJson = JSON.parse(event.data);
 	        if (eventJson.messageType == "ROOM_INFO") {
+                if (eventJson.data.clients[0]){
+                    window.clients_name = eventJson.data.clients[0].nickName;
+                    window.clients_uid = eventJson.data.clients[0].uid;
+                }
                 window.roomid = eventJson.data.roomId;
-	            window.clients_name = eventJson.data.clients[0].nickName;
-	            window.clients_uid = eventJson.data.clients[0].uid;
                 window.host_name = eventJson.data.host.nickName;
                 window.host_uid = eventJson.data.host.uid;
                 if (eventJson.data.readyPlayUids[0] != null){
@@ -111,7 +119,7 @@ cc.Class({
                 cc.log(window.consume_propZoneId);
             }
             if (eventJson.messageType == "GAME_START") {
-                window.state = 2;
+                cc.audioEngine.pauseAll();
                 cc.director.loadScene(window.fighting_scene);
             }
             if (eventJson.messageType == "POSITION_SYCN") {
@@ -130,13 +138,16 @@ cc.Class({
                 });
                 window.triger1 = true;
             }
+            if(eventJson.messageType == "GAME_OVER"){
+                window.stop = true;
+            }
             if(eventJson.messageType == "GAME_RESULT"){
                 window.h_score = eventJson.data[0].score;
                 window.c_score = eventJson.data[1].score;
             }
             if (eventJson.messageType == "PLAY_LEAVE") {
                 window.hostleave = eventJson.data.hostLeave;//布尔型房主离开为ture 客人离开为false
-                window.state = 0;
+                cc.audioEngine.pauseAll();
                 cc.director.loadScene(window.scene_1_scene);
             }
             window.current_uid = window.clients_uid;
@@ -182,20 +193,19 @@ cc.Class({
             	var responseJson = JSON.parse(response);
             	window.code = responseJson["data"];
             	window.status = responseJson["status"];
+                if (window.status == 200) {
+                    window.socket = new WebSocket("wss://superzone.equator8848.xyz/superzone/ws/game/"+window.code);
+                }
         	}
     	}
     	request.send();
-        window.socket = new WebSocket("wss://superzone.equator8848.xyz/superzone/ws/game/"+window.code);
 	},
 	Host:function(){
+        cc.log("host");
         window.flag = true;
-	    // Create WebSocket connection.
-         window.socket = new WebSocket("wss://superzone.equator8848.xyz/superzone/ws/game/"+window.code);
 
 	    // Connection opened
-	    window.socket.addEventListener('open', function (event) {
-	        window.socket.send(JSON.stringify({"messageType":"CREATE_GAME"}));
-	    });
+	    window.socket.send(JSON.stringify({"messageType":"CREATE_GAME"}));
 	    window.socket.addEventListener('message', function (event) {
 	        // console.log('Message from server ', event);
 	        var eventJson = JSON.parse(event.data);
@@ -207,11 +217,10 @@ cc.Class({
                     window.clients_name = eventJson.data.clients[0].nickName;
                     window.clients_uid = eventJson.data.clients[0].uid;
                 }
-                window.state = 1;
                 cc.director.loadScene(window.scene_match);
 	        }
             if (eventJson.messageType == "GAME_START") {
-                window.state = 2;
+                cc.audioEngine.pauseAll();
                 cc.director.loadScene(window.fighting_scene);
             }
             if (eventJson.messageType == "PROP_PRODUCE") {
@@ -249,6 +258,9 @@ cc.Class({
                 });
                 window.triger1 = true;
             }
+            if(eventJson.messageType == "GAME_OVER"){
+                window.stop = true;
+            }
             if(eventJson.messageType == "GAME_RESULT"){
                 window.h_score = eventJson.data[0].score;
                 window.c_score = eventJson.data[1].score;
@@ -258,6 +270,7 @@ cc.Class({
                 if (window.state == 2){
                     window.ready_2 = false;
                     cc.director.loadScene(window.scene_match);
+                    cc.audioEngine.pauseAll();
                 }
             }
             window.current_uid = window.host_uid;
