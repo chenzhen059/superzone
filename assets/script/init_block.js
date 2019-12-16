@@ -114,6 +114,7 @@ cc.Class({
         this.symbol = 0;
         this.last = false;
         window.triger1 = false;
+        window.stop = false;
         this.acc = 0;
         this.time_accumulate = 0;
         this.time_trigger = false;
