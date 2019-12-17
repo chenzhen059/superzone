@@ -182,7 +182,7 @@ cc.Class({
     sendHttpPost: function(string){
     	var self = this;
     	var request = cc.loader.getXMLHttpRequest();
-    	var url = "https://superzone.equator8848.xyz/superzone/api/user/login?nickName="+string;
+    	var url = "https://www.equator8848.xyz/superzone/api/user/login?nickName="+string;
     	request.open("POST",url,false);
     	request.setRequestHeader("Content-Type","text/plain;charset=UTF-8");
     	request.onreadystatechange = function(){
@@ -194,7 +194,7 @@ cc.Class({
             	window.code = responseJson["data"];
             	window.status = responseJson["status"];
                 if (window.status == 200) {
-                    window.socket = new WebSocket("wss://superzone.equator8848.xyz/superzone/ws/game/"+window.code);
+                    window.socket = new WebSocket("wss://www.equator8848.xyz/superzone/ws/game/"+window.code);
                 }
         	}
     	}
